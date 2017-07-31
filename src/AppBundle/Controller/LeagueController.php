@@ -16,12 +16,17 @@ class LeagueController extends Controller
      */
     public function indexAction()
     {
-        $em = $this->getDoctrine()->getManager();
-        $team = $em->getRepository(Matches::class)->getAllMatches();
-        dump($team);
+        $message = (new \Swift_Message('Hello email'))
+            ->setSubject('My subject123')
+            ->setFrom(['govnarev@ukr.net' => 'Govnarev'])
+            ->setTo('lysak.posta@gmail.com')
+            ->setBody('Here is the message itself');
+        $this->get('mailer')->send($message);
 
-        return new Response(
-            '<html><body>Lucky number: '.$team.'</body></html>'
-        );
+        $em = $this->getDoctrine()->getManager();
+        $matches = $em->getRepository(Matches::class)->getAllMatches();
+        dump($matches);
+
+        return $this->render('league/index.html.twig', array('matches' => $matches));
     }
 }
