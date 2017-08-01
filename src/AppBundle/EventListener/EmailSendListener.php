@@ -27,7 +27,7 @@ class EmailSendListener {
                 ->setTo('govnarev@ukr.net')
                 ->setBody(
                     $this->engine->render(
-                        'league/mail/email.txt.twig',
+                        'league/mail/email.html.twig',
                         ['username' => $bid["user"]["name"], 'team1' => $bid["homeTeam"], 'team2' => $bid["guestTeam"]]
                     ),
                     'text/html'

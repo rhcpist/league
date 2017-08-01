@@ -18,6 +18,7 @@ class MatchesRepository extends EntityRepository
         $query = $this->getEntityManager()->createQuery(
             '
                 select 
+                  m.id,
                   m.date, 
                   (select tm.team from AppBundle:Teams tm where tm.id = m.team1) homeTeam, 
                   m.scored1, 

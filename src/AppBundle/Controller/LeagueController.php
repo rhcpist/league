@@ -5,10 +5,14 @@ namespace AppBundle\Controller;
 use AppBundle\Event\EmailEvent;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Entity\Teams;
 use AppBundle\Entity\Matches;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
 class LeagueController extends Controller
 {
@@ -17,16 +21,6 @@ class LeagueController extends Controller
      */
     public function indexAction()
     {
-//        $message = (new \Swift_Message())
-//            ->setSubject('My subject new')
-//            ->setFrom(['lysak.posta@gmail.com' => 'Lysak Dmitry'])
-//            ->setTo('govnarev@ukr.net')
-//            ->setBody($this->renderView(
-//                'league/mail/email.txt.twig',
-//                ['username' => 'Dmitriy', 'team1' => 'Dinamo Kiev', 'team2' => 'Young Boys']
-//            ));
-//        $this->get('mailer')->send($message);
-
         $em = $this->getDoctrine()->getManager();
         $matches = $em->getRepository(Matches::class)->getAllMatches();
         $userTeam = $this->getUser()->getTeam();
@@ -45,5 +39,27 @@ class LeagueController extends Controller
         $dispatcher->dispatch('app.email', new EmailEvent($em, $data));
 
         return $this->render('league/index.html.twig', array('matches' => $matches));
+    }
+
+    /**
+     * @Route("/edit/{id}", name="edit_match")
+     */
+    public function editAction($id, Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $match = $em->getRepository(Matches::class)->find($id);
+        if (empty($match)) {
+            return Response::HTTP_NOT_FOUND;
+        }
+
+        $form = $this->createFormBuilder($match)
+            ->add('scored1', IntegerType::class)
+            ->add('scored2', IntegerType::class)
+            ->add('save', SubmitType::class, array('label' => 'Edit match'))
+            ->getForm();
+
+        return $this->render('league/edit.html.twig', array(
+            'form' => $form->createView(),
+        ));
     }
 }

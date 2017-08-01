@@ -4,11 +4,12 @@ parameters:
     database_port: 3306
     database_name: league
     database_user: root
-    database_password: 1111
+    database_password: null
     mailer_transport: gmail
     mailer_encryption: ssl
     mailer_host: smtp.gmail.com
     mailer_port: 465
     mailer_user: lysak.posta@gmail.com
-    mailer_password: zazvovqligmpqwhn
+    #mailer_password: zazvovqligmpqwhn
+    mailer_password: yznfrtzroukhgrfx
     secret: ThisTokenIsNotSoSecretChangeIt
