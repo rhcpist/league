@@ -5,9 +5,10 @@ parameters:
     database_name: league
     database_user: root
     database_password: 1111
-    mailer_transport: smtp
+    mailer_transport: gmail
     mailer_encryption: ssl
-    mailer_host: smtp.ukr.net
-    mailer_user: govnarev@ukr.net
-    mailer_password: 564237430821
+    mailer_host: smtp.gmail.com
+    mailer_port: 465
+    mailer_user: lysak.posta@gmail.com
+    mailer_password: zazvovqligmpqwhn
     secret: ThisTokenIsNotSoSecretChangeIt
