@@ -14,9 +14,9 @@ class EmailEvent extends Event {
 
     public function __construct(EntityManager $em, $bid)
     {
-        if ( (\strtotime($bid['date']) - 86400) <= \time() && $bid['user']['notified'] == 0 ) {
+        if ( (\strtotime($bid['date']) - 86400) <= \time() && $bid['user']['notified'] == 1 ) {
             $userObj = $this->em = $em->getRepository(User::class)->find($bid['user']['id']);
-            $userObj->setNotified(1);
+            $userObj->setNotified(2);
             $em->flush();
 
             $this->bid = $bid;

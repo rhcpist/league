@@ -28,7 +28,7 @@ class EmailSendListener {
                 ->setBody(
                     $this->engine->render(
                         'league/mail/email.txt.twig',
-                        ['username' => 'Dmitriy', 'team1' => 'Dinamo Kiev', 'team2' => 'Young Boys']
+                        ['username' => $bid["user"]["name"], 'team1' => $bid["homeTeam"], 'team2' => $bid["guestTeam"]]
                     ),
                     'text/html'
                 );

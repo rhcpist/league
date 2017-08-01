@@ -35,6 +35,7 @@ class LeagueController extends Controller
                 $data = $match;
             }
         }
+        $data["user"]["name"] = $this->getUser()->getUsername();
         $data["user"]["id"] = $this->getUser()->getId();
         $data["user"]["team"] = $userTeam;
         $data["user"]["notified"] = $this->getUser()->getNotified();
