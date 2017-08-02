@@ -59,19 +59,61 @@ class Matches
 
     /**
      * Many Matches have One Team.
-     * @ORM\ManyToOne(targetEntity="Teams")
+     * @ORM\ManyToOne(targetEntity="Teams", fetch="EAGER")
      * @ORM\JoinColumn(name="team1", referencedColumnName="id")
      *
      */
-    private $team_1;
+    public $team_1;
 
     /**
      * Many Matches have One Team.
-     * @ORM\ManyToOne(targetEntity="Teams")
+     * @ORM\ManyToOne(targetEntity="Teams", fetch="EAGER")
      * @ORM\JoinColumn(name="team2", referencedColumnName="id")
      *
      */
     private $team_2;
+
+    /**
+     * Set Team1
+     * @param object Teams
+     * @return object
+     */
+
+    public function setTeam_1($team) {
+        $this->team_1 = $team;
+
+        return $this->team_1;
+    }
+
+    /**
+     * Set Team2
+     * @param object Teams
+     * @return object
+     */
+
+    public function setTeam_2($team) {
+        $this->team_2 = $team;
+
+        return $this->team_2;
+    }
+
+    /**
+     * Get Team1
+     * @return object
+     */
+    public function getTeam_1()
+    {
+        return $this->team_1;
+    }
+
+    /**
+     * Get Team2
+     * @return object
+     */
+    public function getTeam_2()
+    {
+        return $this->team_2;
+    }
 
     /**
      * Get id

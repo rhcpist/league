@@ -200,7 +200,7 @@ class Teams
     /**
      * Set scored
      *
-     * @param integer $scored
+     * @param integer
      * @return Teams
      */
     public function setScored($scored)

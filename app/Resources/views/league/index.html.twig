@@ -4,7 +4,8 @@
     <div class="container">
         <div class="row" style="margin: 20px 0;">
             <h1 style="text-align: center">List of matches</h1>
-            <a href="/logout">Log out</a>
+            <a class="btn btn-default" href="/logout">Log out</a>
+            <a class="btn btn-primary" href="/create" style="float: right">Add new match</a>
             <div class="row" style="margin: 20px 0;">
                 <table id="dataTable" class="display">
                     <tfoot>
@@ -36,18 +37,26 @@
                 columns: [
                     { title: "Date",  data: 'date' },
                     { title: "Home Team", data: 'homeTeam' },
-                    { title: "Result", data: 'scored1' },
+                    { title: "Result", data: 'scored1', "render": function(data,type,row,meta){
+                        if (row.scored1 == null && row.scored2 == null){
+                            var res = "? : ?";
+                        }
+                        else {
+                            var res = row.scored1 + " : " + row.scored2;
+                        }
+                        return res;
+                    }},
                     { title: "Result2", data: 'scored2', visible: false },
                     { title: "Guest Team", data: 'guestTeam' },
                     { title: "Edit", data: 'id',
                         "render": function(data,type,row,meta) {
-                            var a = "<a target='_blank' href='/edit/"+row.id+"'><i class='fa fa-edit'></i>Edit</a>";
+                            var a = "<a href='/edit/"+row.id+"'><i class='fa fa-edit'></i>Edit</a>";
                             return a;
                         }
                     },
                     { title: "Delete", data: 'id',
                         "render": function(data,type,row,meta) {
-                            var a = "<a target='_blank' href='/delete/"+row.id+"'><i class='fa fa-edit'></i>Delete</a>";
+                            var a = "<a href='/delete/"+row.id+"'><i class='fa fa-edit'></i>Delete</a>";
                             return a;
                         }
                     }
@@ -55,22 +64,6 @@
                 pageLength: 10,
                 lengthMenu: [ 5, 10, 50 ]
             });
-
-            //var result = table.column( 2 ).data()[0].concat(' : ').concat(table.column( 3 ).data()[0]);
-            //table.cell(0, 2).data(result);
-
-            var len = {{ matches | length }}
-            for (var index = 0; index < len; index++ ) {
-               if ((table.column(2).data()[index] == null) || (table.column(3).data()[index] == null)) {
-                   result = '? : ?';
-                   table.cell(index, 2).data(result);
-               }
-               else {
-                   var result = table.column(2).data()[index].concat(' : ').concat(table.column(3).data()[index]);
-                   table.cell(index, 2).data(result);
-               }
-            }
-
 
             table.columns().every( function () {
                 var that = this;
