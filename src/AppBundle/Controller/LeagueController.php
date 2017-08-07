@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Event\EmailEvent;
 #use Doctrine\DBAL\Types\DateTimeType;
+use AppBundle\Event\UpdateRateEvent;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -67,11 +68,12 @@ class LeagueController extends Controller
                 $data = $form->getData();
                 $match->setScored1($data->getScored1());
                 $match->setScored2($data->getScored2());
-//                $match->setTeam_1($data->getTeam_1())->setScored($data->getScored1());
-//                $match->setTeam_2($data->getTeam_2())->setScored($data->getScored2());
                 $em->persist($match);
                 $em->flush();
-                //dump($match);
+
+                $dispatcher = $this->container->get('event_dispatcher');
+                $dispatcher->dispatch('app.rate', new UpdateRateEvent($data));
+
                 return $this->redirectToRoute('homepage');
             }
         }
