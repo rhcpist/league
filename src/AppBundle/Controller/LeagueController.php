@@ -132,23 +132,23 @@ class LeagueController extends Controller
 
         if ($request->isMethod('POST')) {
             $form->submit($request);
-            $isOneNull = is_null($form->getData()["scored1"]) || is_null($form->getData()["scored2"]) && (isset($form->getData()["scored1"]) != isset($form->getData()["scored2"] )) != false;
-            dump($isOneNull);
-//            if ( $form->isSubmitted() && $form->isValid() && $form->getData()["team1"]->getId() != $form->getData()["team2"]->getId() && $isOneNull != true  ) {
-//                $data = $form->getData();
-//                dump($data);
-//                $match->setScored1($data["scored1"]);
-//                $match->setScored2($data["scored2"]);
-//                $match->setTeam1($data["team1"]->getId());
-//                $match->setTeam2($data["team2"]->getId());
-//                $match->setTeam_1($data["team1"]);
-//                $match->setTeam_2($data["team2"]);
-//                $match->setDate($data["startDateTime"]);
-//                $em->persist($match);
-//                $em->flush();
-//                dump($match);
-//                return $this->redirectToRoute('homepage');
-//            }
+            $isOneNull = is_null($form->getData()["scored1"]) && is_null($form->getData()["scored2"]) || isset($form->getData()["scored1"]) && isset($form->getData()["scored2"] );
+            //dump($isOneNull);
+            if ( $form->isSubmitted() && $form->isValid() && $form->getData()["team1"]->getId() != $form->getData()["team2"]->getId() && $isOneNull == true  ) {
+                $data = $form->getData();
+                dump($data);
+                $match->setScored1($data["scored1"]);
+                $match->setScored2($data["scored2"]);
+                $match->setTeam1($data["team1"]->getId());
+                $match->setTeam2($data["team2"]->getId());
+                $match->setTeam_1($data["team1"]);
+                $match->setTeam_2($data["team2"]);
+                $match->setDate($data["startDateTime"]);
+                $em->persist($match);
+                $em->flush();
+                dump($match);
+                return $this->redirectToRoute('homepage');
+            }
         }
 
         return $this->render('league/create.html.twig', array(
