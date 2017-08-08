@@ -36,7 +36,7 @@ class LeagueController extends Controller
         $data["user"]["id"] = $this->getUser()->getId();
         $data["user"]["team"] = $userTeam;
         $data["user"]["notified"] = $this->getUser()->getNotified();
-//        dump($matches);
+        //        dump($matches);
 
         $dispatcher = $this->container->get('event_dispatcher');
         $dispatcher->dispatch('app.email', new EmailEvent($em, $data));
@@ -68,12 +68,20 @@ class LeagueController extends Controller
                 $data = $form->getData();
                 $match->setScored1($data->getScored1());
                 $match->setScored2($data->getScored2());
+                if ( $match->getTeam_1()->getPlayed() == 0 && $match->getTeam_2()->getPlayed() == 0 ) {
+                    $dispatcher = $this->container->get('event_dispatcher');
+                    $dispatcher->dispatch('app.rate', new UpdateRateEvent($data,'add'));
+
+                }
+                else {
+                    $dispatcher = $this->container->get('event_dispatcher');
+                    $dispatcher->dispatch('app.rate', new UpdateRateEvent($data,'edit'));
+                }
+                #$match->getTeam_1()->setPlayed($match->getTeam_1()->getPlayed());
+                #$match->getTeam_2()->setPlayed($match->getTeam_2()->getPlayed());
+                dump($match);
                 $em->persist($match);
                 $em->flush();
-
-                $dispatcher = $this->container->get('event_dispatcher');
-                $dispatcher->dispatch('app.rate', new UpdateRateEvent($data));
-
                 return $this->redirectToRoute('homepage');
             }
         }
@@ -93,8 +101,13 @@ class LeagueController extends Controller
         if (empty($match)) {
             return Response::HTTP_NOT_FOUND;
         }
+        dump($match);
         $em->remove($match);
         $em->flush();
+
+        $dispatcher = $this->container->get('event_dispatcher');
+        $dispatcher->dispatch('app.rate', new UpdateRateEvent($match,'delete'));
+
         return $this->redirectToRoute('homepage');
     }
 
@@ -121,26 +134,24 @@ class LeagueController extends Controller
                 'choice_label' => 'team',
                 'mapped' => true
             ))
-            ->add('scored1', IntegerType::class, array('label' => false, 'required' => false))
             ->add('team2', EntityType::class, array(
                 'label' => 'Choose GuestTeam',
                 'class' => 'AppBundle:Teams',
                 'choice_label' => 'team',
                 'mapped' => true
             ))
-            ->add('scored2', IntegerType::class, array('label' => false, 'required' => false))
             ->add('save', SubmitType::class, array('label' => 'Add new match', 'attr' => array('class' => 'btn btn-primary')))
             ->getForm();
 
         if ($request->isMethod('POST')) {
             $form->submit($request);
-            $isOneNull = is_null($form->getData()["scored1"]) && is_null($form->getData()["scored2"]) || isset($form->getData()["scored1"]) && isset($form->getData()["scored2"] );
+            #$isOneNull = is_null($form->getData()["scored1"]) && is_null($form->getData()["scored2"]) || isset($form->getData()["scored1"]) && isset($form->getData()["scored2"] );
             //dump($isOneNull);
-            if ( $form->isSubmitted() && $form->isValid() && $form->getData()["team1"]->getId() != $form->getData()["team2"]->getId() && $isOneNull == true  ) {
+            if ( $form->isSubmitted() && $form->isValid() && $form->getData()["team1"]->getId() != $form->getData()["team2"]->getId()  ) {
                 $data = $form->getData();
                 dump($data);
-                $match->setScored1($data["scored1"]);
-                $match->setScored2($data["scored2"]);
+                $match->setScored1(NULL);
+                $match->setScored2(NULL);
                 $match->setTeam1($data["team1"]->getId());
                 $match->setTeam2($data["team2"]->getId());
                 $match->setTeam_1($data["team1"]);
@@ -148,7 +159,9 @@ class LeagueController extends Controller
                 $match->setDate($data["startDateTime"]);
                 $em->persist($match);
                 $em->flush();
-                dump($match);
+//                $dispatcher = $this->container->get('event_dispatcher');
+//                $dispatcher->dispatch('app.rate', new UpdateRateEvent($data, 'add'));
+                //dump($match);
                 return $this->redirectToRoute('homepage');
             }
         }

@@ -2,17 +2,16 @@
 
 namespace AppBundle\Event;
 use Symfony\Component\EventDispatcher\Event;
-use AppBundle\Entity\Teams;
+
 
 class UpdateRateEvent extends Event {
 
     protected $dataMatch;
 
-    protected $em;
-
-    public function __construct($dataMatch)
+    public function __construct($dataMatch, $option)
     {
         $rate = array();
+
         if ($dataMatch->getScored1() > $dataMatch->getScored2()) {
             $rate["win"]["id"] = $dataMatch->getTeam1();
             $rate["win"]["scored"] = $dataMatch->getScored1();
@@ -20,7 +19,6 @@ class UpdateRateEvent extends Event {
             $rate["loss"]["id"] = $dataMatch->getTeam2();
             $rate["loss"]["scored"] = $dataMatch->getScored2();
             $rate["loss"]["missed"] = $dataMatch->getScored1();
-            #dump($rate);
         }
         if ($dataMatch->getScored1() < $dataMatch->getScored2()) {
             $rate["win"]["id"] = $dataMatch->getTeam2();
@@ -29,7 +27,6 @@ class UpdateRateEvent extends Event {
             $rate["loss"]["id"] = $dataMatch->getTeam1();
             $rate["loss"]["scored"] = $dataMatch->getScored1();
             $rate["loss"]["missed"] = $dataMatch->getScored2();
-            #dump($rate);
         }
         if ($dataMatch->getScored1() == $dataMatch->getScored2()) {
             $rate["draw"][0]["id"] = $dataMatch->getTeam1();
@@ -38,9 +35,22 @@ class UpdateRateEvent extends Event {
             $rate["draw"][1]["id"] = $dataMatch->getTeam2();
             $rate["draw"][1]["scored"] = $dataMatch->getScored2();
             $rate["draw"][1]["missed"] = $dataMatch->getScored1();
-            #dump($rate);
         }
-        $this->dataMatch = $rate;
+
+        switch ($option){
+            case 'edit':
+                $rate["option"] = $option;
+                $this->dataMatch = $rate;
+                break;
+            case 'add':
+                $rate["option"] = $option;
+                $this->dataMatch = $rate;
+                break;
+            case 'delete':
+                $rate["option"] = $option;
+                $this->dataMatch = $rate;
+                break;
+        }
     }
 
     public function getDataMatch()
